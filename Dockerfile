@@ -6,11 +6,21 @@ RUN apt-get update && apt-get install -y \
     unzip \
     curl \
     libpq-dev \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
     nodejs \
     npm
 
-# Install PostgreSQL extension
-RUN docker-php-ext-install pdo pdo_pgsql pgsql
+# Configure GD extension
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+
+# Install PHP extensions
+RUN docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    pgsql \
+    gd
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -27,13 +37,8 @@ RUN composer install --no-dev --optimize-autoloader
 # Install frontend dependencies
 RUN npm install && npm run build
 
-# Generate Laravel caches
-RUN php artisan config:clear
-RUN php artisan route:clear
-RUN php artisan view:clear
-
 # Expose Render port
 EXPOSE 10000
 
-# Start Laravel server
+# Start Laravel
 CMD php artisan serve --host=0.0.0.0 --port=10000
