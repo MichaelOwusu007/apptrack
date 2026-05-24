@@ -35,13 +35,13 @@ WORKDIR /app
 COPY . .
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Install frontend dependencies
-RUN npm install && npm run build
+RUN npm ci && npm run build && rm -f public/hot
 
 # Expose Render port
 EXPOSE 10000
 
 # Start Laravel
-CMD php artisan optimize:clear && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=10000
+CMD sh -c "php artisan optimize:clear && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"
