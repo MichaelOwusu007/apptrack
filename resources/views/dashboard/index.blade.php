@@ -160,9 +160,7 @@
         </div>
     </div>
 
-    git init
-git add .
-git commit -m "Initial commit"
+    
 
     {{-- Today's Activities Table --}}
     <div class="bg-slate-900/60 border border-white/5 rounded-2xl overflow-hidden">
